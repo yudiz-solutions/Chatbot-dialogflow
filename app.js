@@ -13,7 +13,7 @@ const logger = require("morgan");
 const db = require("./config/db");
 var emoji = require("node-emoji");
 
-const { isDefined, sendAccountLinking, sendAudioMessage, sendButtonMessage, sendFileMessage, sendGenericMessage, sendGifMessage, sendImageMessage, sendQuickReply, sendReadReceipt, sendReceiptMessage, sendTextMessage, sendTypingOff, sendTypingOn, sendVideoMessage } = require("./misc/payload")
+const {  isDefined, sendAccountLinking, sendAudioMessage, sendButtonMessage, sendFileMessage, sendGenericMessage, sendGifMessage, sendImageMessage, sendQuickReply, sendReadReceipt, sendReceiptMessage, sendTextMessage, sendTypingOff, sendTypingOn, sendVideoMessage } = require("./misc/payload")
 const { callSendAPI } = require("./misc/common")
 const cli = require('./config/cli').console
 /**
@@ -173,6 +173,8 @@ function receivedMessage(event) {
 }
 
 function handleMessageAttachments(messageAttachments, senderID) {
+  console.log(messageAttachments);
+
   //for now just reply
   sendTextMessage(senderID, "Attachment received. Thank you.");
 }
@@ -203,12 +205,119 @@ function handleApiAiAction(sender, action, responseText, contexts, parameters) {
   cli.yellow(action)
 
   switch (action) {
+    case "send-text":
+      const text = "This is example of Text message."
+      sendTextMessage(sender, text);
+      break;
+    case "sedn-quick-reply":
+      const textRp = "Choose the oprions"
+      const replies = [{
+        "content_type": "text",
+        "title": "1",
+        "payload": "Example 1",
+      },
+      {
+        "content_type": "text",
+        "title": "2",
+        "payload": "Example 2",
+      },
+      {
+        "content_type": "text",
+        "title": "3",
+        "payload": "Example 3",
+      }];
+      sendQuickReply(sender, textRp, replies)
+      break;
+    case "send-photo":
+      const imgUrl = "https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/881e6651881085.58fd911b65d88.png";
+      sendImageMessage(sender, imgUrl);
+      break;
+    case "send-button":
+      const bText = "exmple buttons";
+      const buttons = [{
+        "type": "web_url",
+        "url": "https://f1948e04.ngrok.io",
+        "title": "URL",
+      }, {
+        "type": "postback",
+        "title": "POSTBACK",
+        "payload": "POSTBACK TEST"
+      }, {
+        "type": "phone_number",
+        "title": "CALL",
+        "payload": "+919510733999"
+      }]
+      sendButtonMessage(sender, bText, buttons)
+      break;
+    case "send-carousel":
+      const elements = [{
+        "title": "Welcome!",
+        "subtitle": "We have the right hat for everyone.We have the right hat for everyone.We have the right hat for everyone.",
+        "imageUrl": "https://www.stepforwardmichigan.org/wp-content/uploads/2017/03/step-foward-fb-1200x628-house.jpg",
+        "buttons": [
+          {
+            "postback": "https://f1948e04.ngrok.io",
+            "text": "View Website"
+          }, {
+            "text": "Start Chatting",
+            "postback": "PAYLOAD EXAMPLE"
+          }
+        ]
+      }, {
+        "title": "Welcome!",
+        "imageUrl": "https://www.stepforwardmichigan.org/wp-content/uploads/2017/03/step-foward-fb-1200x628-house.jpg",
+        "subtitle": "We have the right hat for everyone.We have the right hat for everyone.We have the right hat for everyone.",
+        "buttons": [
+          {
+            "postback": "https://f1948e04.ngrok.io",
+            "text": "View Website"
+          }, {
+            "text": "Start Chatting",
+            "postback": "PAYLOAD EXAMPLE"
+          }
+        ]
+      }];
+      handleCardMessages(elements, sender)
+      break;
 
-    default:
+    case "send-media":
+      const messageData = {
+        "recipient": {
+          "id": sender
+        },
+        "message": {
+          "attachment": {
+            "type": "template",
+            "payload": {
+              "template_type": "media",
+              "elements": [
+                {
+                  "media_type": "image",
+                  "url": "https://www.facebook.com/photo.php?fbid=1013368485505320&set=pcb.1013368562171979&type=3&theater  ",
+                  "buttons": [
+                    {
+                      "type": "web_url",
+                      "url": "https://f1948e04.ngrok.io",
+                      "title": "View Website",
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      }
+      callSendAPI(messageData)
+      break;
+    
+    case "send-receipt":
+
+      sendTextMessage(sender, "Give answer")
+    
+    break;
+      default:
       //unhandled action, just send back the text
       sendTextMessage(sender, responseText);
-
-
   }
 }
 
@@ -240,7 +349,6 @@ function handleMessage(message, sender) {
         },
         message: message.payload.facebook
       };
-
       callSendAPI(messageData)
       break;
   }
@@ -345,7 +453,7 @@ function handleApiAiResponse(sender, response) {
 }
 
 function sendToApiAi(sender, text) {
-  sendTypingOn(sender);
+ // sendTypingOn(sender);
   let apiaiRequest = apiAiService.textRequest(text, {
     sessionId: sessionIds.get(sender)
   });

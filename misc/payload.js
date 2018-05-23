@@ -1,7 +1,7 @@
-const {callSendAPI} = require('./common')
+const { callSendAPI } = require('./common')
 const config = require("../config")
 const request = require("request-promise");
-const  isDefined = (obj) => {
+const isDefined = (obj) => {
   if (typeof obj == "undefined") {
     return false;
   }
@@ -13,8 +13,25 @@ const  isDefined = (obj) => {
   return obj != null;
 }
 
+/*const sendFbImageVideo = async (recipientId,elements)=>{
+  const messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message:{
+      attachment: {
+        type:"template",
+        payload:{
+          template_type:"media",
+          elements: elements
+        }
+      }
+    }
+  };
+  await callSendAPI(messageData)
+} */
 
-const sendTextMessage = async(recipientId, text) =>{
+const sendTextMessage = async (recipientId, text) => {
   var messageData = {
     recipient: {
       id: recipientId
@@ -31,9 +48,7 @@ const sendTextMessage = async(recipientId, text) =>{
  * Send an image using the Send API.
  *
  */
-const sendImageMessage = async(recipientId, imageUrl) => {
-  console.log("----2----");
-
+const sendImageMessage = async (recipientId, imageUrl) => {
   var messageData = {
     recipient: {
       id: recipientId
@@ -55,7 +70,7 @@ const sendImageMessage = async(recipientId, imageUrl) => {
  * Send a Gif using the Send API.
  *
  */
- const  sendGifMessage = async (recipientId) => {
+const sendGifMessage = async (recipientId) => {
   var messageData = {
     recipient: {
       id: recipientId
@@ -70,14 +85,14 @@ const sendImageMessage = async(recipientId, imageUrl) => {
     }
   };
 
- await callSendAPI(messageData);
+  await callSendAPI(messageData);
 }
 
 /*
  * Send audio using the Send API.
  *
  */
- const sendAudioMessage= async (recipientId) =>{
+const sendAudioMessage = async (recipientId) => {
   var messageData = {
     recipient: {
       id: recipientId
@@ -92,7 +107,7 @@ const sendImageMessage = async(recipientId, imageUrl) => {
     }
   };
 
- await callSendAPI(messageData);
+  await callSendAPI(messageData);
 }
 
 /*
@@ -114,14 +129,14 @@ const sendVideoMessage = async (recipientId, urlLink) => {
     }
   };
 
- await callSendAPI(messageData);
+  await callSendAPI(messageData);
 }
 
 /*
  * Send a video using the Send API.
  * example fileName: fileName"/assets/test.txt"
  */
-const sendFileMessage =async (recipientId, fileName) =>{
+const sendFileMessage = async (recipientId, fileName) => {
   var messageData = {
     recipient: {
       id: recipientId
@@ -136,14 +151,14 @@ const sendFileMessage =async (recipientId, fileName) =>{
     }
   };
 
- await callSendAPI(messageData);
+  await callSendAPI(messageData);
 }
 
 /*
  * Send a button message using the Send API.
  *
  */
-const sendButtonMessage = async (recipientId, text, buttons) =>{
+const sendButtonMessage = async (recipientId, text, buttons) => {
   var messageData = {
     recipient: {
       id: recipientId
@@ -163,7 +178,7 @@ const sendButtonMessage = async (recipientId, text, buttons) =>{
   await callSendAPI(messageData);
 }
 
-const sendGenericMessage = async(recipientId, elements) => {
+const sendGenericMessage = async (recipientId, elements) => {
   var messageData = {
     recipient: {
       id: recipientId
@@ -181,7 +196,7 @@ const sendGenericMessage = async(recipientId, elements) => {
   await callSendAPI(messageData);
 }
 
- const sendReceiptMessage= async (
+const sendReceiptMessage = async (
   recipientId,
   recipient_name,
   currency,
@@ -191,7 +206,7 @@ const sendGenericMessage = async(recipientId, elements) => {
   address,
   summary,
   adjustments
- ) => {
+) => {
   // Generate a random receipt ID as the API requires a unique ID
   var receiptId = "order" + Math.floor(Math.random() * 1000);
 
@@ -207,6 +222,7 @@ const sendGenericMessage = async(recipientId, elements) => {
           recipient_name: recipient_name,
           order_number: receiptId,
           currency: currency,
+          order_url: "http://petersapparel.parseapp.com/order?order_id=123456",
           payment_method: payment_method,
           timestamp: timestamp,
           elements: elements,
@@ -244,7 +260,7 @@ const sendQuickReply = async (recipientId, text, replies, metadata) => {
  * Send a read receipt to indicate the message has been read
  *
  */
- const sendReadReceipt= async(recipientId)=> {
+const sendReadReceipt = async (recipientId) => {
   var messageData = {
     recipient: {
       id: recipientId
@@ -259,7 +275,7 @@ const sendQuickReply = async (recipientId, text, replies, metadata) => {
  * Turn typing indicator on
  *
  */
- const sendTypingOn= (recipientId)=> {
+const sendTypingOn = (recipientId) => {
   var messageData = {
     recipient: {
       id: recipientId
@@ -274,7 +290,7 @@ const sendQuickReply = async (recipientId, text, replies, metadata) => {
  * Turn typing indicator off
  *
  */
- const sendTypingOff= (recipientId) =>{
+const sendTypingOff = (recipientId) => {
   var messageData = {
     recipient: {
       id: recipientId
@@ -289,7 +305,7 @@ const sendQuickReply = async (recipientId, text, replies, metadata) => {
  * Send a message with the account linking call-to-action
  *
  */
- const sendAccountLinking= async(recipientId) =>{
+const sendAccountLinking = async (recipientId) => {
   var messageData = {
     recipient: {
       id: recipientId
@@ -311,7 +327,7 @@ const sendQuickReply = async (recipientId, text, replies, metadata) => {
     }
   };
 
- await callSendAPI(messageData);
+  await callSendAPI(messageData);
 }
 
 const greetUserText = async (userId) => {
@@ -323,7 +339,7 @@ const greetUserText = async (userId) => {
         access_token: config.FB_PAGE_TOKEN
       }
     },
-     (error, response, body) => {
+    (error, response, body) => {
       if (!error && response.statusCode == 200) {
         var user = JSON.parse(body);
 
@@ -348,19 +364,20 @@ const greetUserText = async (userId) => {
 
 module.exports = {
   sendTextMessage,
-sendImageMessage,
-sendGifMessage,
-sendAudioMessage,
-sendVideoMessage,
-sendFileMessage,
-sendButtonMessage,
-sendGenericMessage,
-sendReceiptMessage,
-sendQuickReply,
-sendReadReceipt,
-sendTypingOn,
-sendTypingOff,
-sendAccountLinking,
-greetUserText,
-  isDefined
+  sendImageMessage,
+  sendGifMessage,
+  sendAudioMessage,
+  sendVideoMessage,
+  sendFileMessage,
+  sendButtonMessage,
+  sendGenericMessage,
+  sendReceiptMessage,
+  sendQuickReply,
+  sendReadReceipt,
+  sendTypingOn,
+  sendTypingOff,
+  sendAccountLinking,
+  greetUserText,
+  isDefined,
+ // sendFbImageVideo
 }

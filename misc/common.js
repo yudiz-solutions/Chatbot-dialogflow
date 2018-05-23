@@ -1,5 +1,6 @@
 const config = require("../config")
 const request = require("request-promise");
+var needle = require('needle');
 
 
 /*
@@ -8,6 +9,7 @@ const request = require("request-promise");
  *
  */
 const callSendAPI = async (messageData) => {
+
   let op = {
     uri: "https://graph.facebook.com/v3.0/me/messages",
     qs: {
@@ -46,6 +48,16 @@ const callSendAPI = async (messageData) => {
     });
 
 }
+
+  // var url = "https://graph.facebook.com/v2.6/me/messages?access_token=EAADfiWXfoY8BAPIsS0TeU49pMsLwb4zEvgFJXsHIuiFSJFrPP3zZBEzHlaG0BPuV330v10ZBnZAmGDXonhDUYpFbUZBFUAwqCvdnEJTSoMxU0Ozsd7ZALcpVt40xIs27a81afSsZABLt7nXUxHYGraw00bq2qZBCQbgZBc2kQ2EL0wZDZD"
+  // needle.post(url,messageData)
+  // .on('readable',function (chunks)  {
+  //   console.log(chunks);
+
+  // }).on('done',function (err,resp) {
+  //   console.log('Ready-o!');
+
+  // })
 
 module.exports = {
   callSendAPI

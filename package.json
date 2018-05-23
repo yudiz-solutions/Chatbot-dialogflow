@@ -19,6 +19,7 @@
     "express": "^4.13.4",
     "mongoose": "^5.1.0",
     "morgan": "^1.9.0",
+    "needle": "^2.2.1",
     "node-emoji": "^1.8.1",
     "request": "^2.72.0",
     "request-promise": "^4.2.2",
