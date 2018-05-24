@@ -202,7 +202,19 @@ function handleEcho(messageId, appId, metadata) {
 }
 
 function handleApiAiAction(sender, action, responseText, contexts, parameters) {
-  cli.yellow(action)
+  cli.yellow(JSON.stringify(contexts))
+  cli.blue(action)
+  
+  function isempt(parameters){
+    return Object.keys(parameters).every((x)=>{
+      if(parameters[x] === ''){
+        console.log("empty")
+      }else{
+        console.log("save it");
+      }
+    })
+  }
+  isempt(parameters);
 
   switch (action) {
     case "send-text":
@@ -311,9 +323,8 @@ function handleApiAiAction(sender, action, responseText, contexts, parameters) {
       break;
     
     case "send-receipt":
+      sendTextMessage(sender, "Give answer");
 
-      sendTextMessage(sender, "Give answer")
-    
     break;
       default:
       //unhandled action, just send back the text
