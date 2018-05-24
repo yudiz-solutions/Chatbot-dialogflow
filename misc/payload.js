@@ -13,7 +13,7 @@ const isDefined = (obj) => {
   return obj != null;
 }
 
-/*const sendFbImageVideo = async (recipientId,elements)=>{
+const sendFbImageVideo =  (recipientId,elements)=>{
   const messageData = {
     recipient: {
       id: recipientId
@@ -28,8 +28,8 @@ const isDefined = (obj) => {
       }
     }
   };
-  await callSendAPI(messageData)
-} */
+   callSendAPI(messageData)
+} 
 
 const sendTextMessage = async (recipientId, text) => {
   var messageData = {
@@ -351,7 +351,7 @@ const greetUserText = async (userId) => {
             user.gender
           );
 
-          sendTextMessage(userId, "Welcome " + user.first_name + " " + user.last_name + " 😀 " + "! " + "I am MU-Assistant 🤖 Here to Help You.");
+          sendTextMessage(userId, "Welcome " + user.first_name + " " + user.last_name + " 😀 " + "! " + "I am Y-Assistant 🤖 Here to Help You.");
         } else {
           console.log("Cannot get data for fb user with id", userId);
         }
@@ -379,5 +379,5 @@ module.exports = {
   sendAccountLinking,
   greetUserText,
   isDefined,
- // sendFbImageVideo
+ sendFbImageVideo
 }

@@ -13,7 +13,7 @@ const logger = require("morgan");
 const db = require("./config/db");
 var emoji = require("node-emoji");
 
-const {  isDefined, sendAccountLinking, sendAudioMessage, sendButtonMessage, sendFileMessage, sendGenericMessage, sendGifMessage, sendImageMessage, sendQuickReply, sendReadReceipt, sendReceiptMessage, sendTextMessage, sendTypingOff, sendTypingOn, sendVideoMessage } = require("./misc/payload")
+const { greetUserText,sendFbImageVideo, isDefined, sendAccountLinking, sendAudioMessage, sendButtonMessage, sendFileMessage, sendGenericMessage, sendGifMessage, sendImageMessage, sendQuickReply, sendReadReceipt, sendReceiptMessage, sendTextMessage, sendTypingOff, sendTypingOn, sendVideoMessage } = require("./misc/payload")
 const { callSendAPI } = require("./misc/common")
 const cli = require('./config/cli').console
 /**
@@ -323,8 +323,20 @@ function handleApiAiAction(sender, action, responseText, contexts, parameters) {
       break;
     
     case "send-receipt":
-      sendTextMessage(sender, "Give answer");
-
+      const elm = [
+        {
+          "media_type": "video",
+          "url": "https://www.facebook.com/FacebookIndia/videos/1709899462380301"
+          ,"buttons": [
+            {
+              "type": "web_url",
+              "url": "http://google.com",
+              "title": "View Website",
+            }
+          ]
+        }
+      ]
+      sendFbImageVideo(sender, elm);
     break;
       default:
       //unhandled action, just send back the text
@@ -479,9 +491,6 @@ function sendToApiAi(sender, text) {
   apiaiRequest.end();
 }
 
-
-
-
 /*
  * Postback Event
  *
@@ -503,11 +512,45 @@ function receivedPostback(event) {
   console.log(payload);
 
   switch (payload) {
-    case "GET_STARTED":
+    case "FACEBOOK_WELCOME":
       greetUserText(senderID);
+      const data = {
+        "recipient": {
+          "id": "1709859525787840"
+        },
+        "message": {
+          "attachment": {
+            "type": "template",
+            "payload": {
+              "template_type": "media",
+              "elements": [
+                {
+                  "media_type": "video",
+                  "url": "https://www.facebook.com/100004965349144/videos/1013384448837057",
+                  "buttons": [
+                    {
+                      "type": "web_url",
+                      "url": "http://google.com",
+                      "title": "View Website"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      }      
+      sendVideoMessage(senderID, data)
       break;
     default:
       //unindentified payload
+      var elements = [
+        {
+          "media_type": "video",
+          "url": "https://www.facebook.com/100004965349144/videos/1013384448837057"
+        }
+      ]
+      sendVideoMessage(senderID,elements)
       sendTextMessage(senderID, "I'm not sure what you want. Can you be more specific?");
       break;
   }

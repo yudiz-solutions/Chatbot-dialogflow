@@ -10,34 +10,39 @@ var axios = require('axios');
  */
 const callSendAPI = async (messageData) => {
 
-
+ // console.log(messageData.message.attachment.payload);
+  console.log(JSON.stringify(messageData));
+  
   const url = "https://graph.facebook.com/v3.0/me/messages?access_token=" + config.FB_PAGE_TOKEN;
   await axios.post(url,messageData)
     .then(function (response) {
-      if (response.statuse == 200) {
-        var recipientId = response.data.recipient_id;
-        var messageId = response.data.message_id;
+      // if (response.statuse == 200) {
+      //   var recipientId = response.data.recipient_id;
+      //   var messageId = response.data.message_id;
 
-        if (messageId) {
-          console.log(
-            "Successfully sent message with id %s to recipient %s",
-            messageId,
-            recipientId
-          );
-        } else {
-          console.log(
-            "Successfully called Send API for recipient %s",
-            recipientId
-          );
-        }
-      }
+      //   if (messageId) {
+      //     console.log(
+      //       "Successfully sent message with id %s to recipient %s",
+      //       messageId,
+      //       recipientId
+      //     );
+      //   } else {
+      //     console.log(
+      //       "Successfully called Send API for recipient %s",
+      //       recipientId
+      //     );
+      //   }
+      // }
+      console.log("SUCCESS");
+      
     })
     .catch(function (error) {
-            console.error(
-        "Failed calling Send API",
-        response.status,
-        response.statusText 
-      );
+      //       console.error(
+      //   "Failed calling Send API",
+      //   response.status,
+      //   response.statusText 
+      // );
+      console.log("ERROR");
     });
   }
 
