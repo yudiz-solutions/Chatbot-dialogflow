@@ -205,7 +205,8 @@ const sendReceiptMessage = async (
   elements,
   address,
   summary,
-  adjustments
+  adjustments,
+  order_url
 ) => {
   // Generate a random receipt ID as the API requires a unique ID
   var receiptId = "order" + Math.floor(Math.random() * 1000);
@@ -222,13 +223,13 @@ const sendReceiptMessage = async (
           recipient_name: recipient_name,
           order_number: receiptId,
           currency: currency,
-          order_url: "http://petersapparel.parseapp.com/order?order_id=123456",
           payment_method: payment_method,
+          order_url: order_url,
           timestamp: timestamp,
-          elements: elements,
           address: address,
           summary: summary,
-          adjustments: adjustments
+          adjustments: adjustments,
+          elements: elements,
         }
       }
     }
@@ -282,7 +283,6 @@ const sendTypingOn = (recipientId) => {
     },
     sender_action: "typing_on"
   };
-
   callSendAPI(messageData);
 }
 

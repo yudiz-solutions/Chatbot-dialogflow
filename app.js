@@ -13,7 +13,7 @@ const logger = require("morgan");
 const db = require("./config/db");
 var emoji = require("node-emoji");
 
-const { greetUserText,sendFbImageVideo, isDefined, sendAccountLinking, sendAudioMessage, sendButtonMessage, sendFileMessage, sendGenericMessage, sendGifMessage, sendImageMessage, sendQuickReply, sendReadReceipt, sendReceiptMessage, sendTextMessage, sendTypingOff, sendTypingOn, sendVideoMessage } = require("./misc/payload")
+const { greetUserText, sendFbImageVideo, isDefined, sendAccountLinking, sendAudioMessage, sendButtonMessage, sendFileMessage, sendGenericMessage, sendGifMessage, sendImageMessage, sendQuickReply, sendReadReceipt, sendReceiptMessage, sendTextMessage, sendTypingOff, sendTypingOn, sendVideoMessage } = require("./misc/payload")
 const { callSendAPI } = require("./misc/common")
 const cli = require('./config/cli').console
 /**
@@ -202,21 +202,8 @@ function handleEcho(messageId, appId, metadata) {
 }
 
 function handleApiAiAction(sender, action, responseText, contexts, parameters) {
-  cli.yellow(JSON.stringify(contexts))
-  cli.blue(action)
-  
-  function isempt(parameters){
-    return Object.keys(parameters).every((x)=>{
-      if(parameters[x] === ''){
-        console.log("empty")
-      }else{
-        console.log("save it");
-      }
-    })
-  }
-  isempt(parameters);
-
-  switch (action) {
+  cli.magenta(action)
+   switch (action) {
     case "send-text":
       const text = "This is example of Text message."
       sendTextMessage(sender, text);
@@ -293,41 +280,24 @@ function handleApiAiAction(sender, action, responseText, contexts, parameters) {
       break;
 
     case "send-media":
-      const messageData = {
-        "recipient": {
-          "id": sender
-        },
-        "message": {
-          "attachment": {
-            "type": "template",
-            "payload": {
-              "template_type": "media",
-              "elements": [
-                {
-                  "media_type": "image",
-                  "url": "https://www.facebook.com/photo.php?fbid=1013368485505320&set=pcb.1013368562171979&type=3&theater  ",
-                  "buttons": [
-                    {
-                      "type": "web_url",
-                      "url": "https://f1948e04.ngrok.io",
-                      "title": "View Website",
-                    }
-                  ]
-                }
-              ]
+      const messageData = [
+        {
+          "media_type": "image",
+          "url": "https://www.facebook.com/photo.php?fbid=1013368485505320&set=pcb.1013368562171979&type=3&theater  ",
+          "buttons": [
+            {
+              "type": "web_url",
+              "url": "https://f1948e04.ngrok.io",
+              "title": "View Website",
             }
-          }
+          ]
         }
-      }
-      callSendAPI(messageData)
-      break;
-    
-    case "send-receipt":
+      ]      
       const elm = [
         {
           "media_type": "video",
           "url": "https://www.facebook.com/FacebookIndia/videos/1709899462380301"
-          ,"buttons": [
+          , "buttons": [
             {
               "type": "web_url",
               "url": "http://google.com",
@@ -336,9 +306,63 @@ function handleApiAiAction(sender, action, responseText, contexts, parameters) {
           ]
         }
       ]
-      sendFbImageVideo(sender, elm);
-    break;
-      default:
+      async function sendMedia() {
+        await sendFbImageVideo(sender, elm);
+        await sendFbImageVideo(sender, messageData);
+      }
+      sendMedia();
+      break;
+
+    case "send-receipt":
+       const recipient_name = "Nikhil Savaliya";
+       const currency = "INR";
+       const payment_method = "Visa 2345";
+       const timestamp = 1428444852;
+       const elementRec = [{
+         "title": "Classic Blue T-Shirt",
+         "subtitle": "100% Soft and Luxurious Cotton",
+         "quantity": 1,
+         "price": 350,
+         "currency": "INR",
+         "image_url": "http://pngimg.com/uploads/tshirt/tshirt_PNG5450.png"
+       }];
+       const address = {
+         "street_1": "A-6, First Floor",
+         "street_2": "Safal Profitaire,",
+         "city": "Ahmedabad",
+         "postal_code": "380015",
+         "state": "Gujarat",
+         "country": "IN"
+       };
+       const summary = {
+         "subtotal": 350.00,
+         "shipping_cost": 4.95,
+         "total_tax": 6.19,
+         "total_cost": 361.14
+       };
+       const adjustments = [
+         {
+           "name": "New Customer Discount",
+           "amount": 20
+         },
+         {
+           "name": "$10 Off Coupon",
+           "amount": 10
+         }
+       ];
+       const order_url = "https://37cf1e51.ngrok.io"
+       sendReceiptMessage(sender,
+         recipient_name,
+         currency,
+         payment_method,
+         timestamp,
+         elementRec,
+         address,
+         summary,
+         adjustments,
+         order_url);
+      break;
+    default:
       //unhandled action, just send back the text
       sendTextMessage(sender, responseText);
   }
@@ -476,7 +500,7 @@ function handleApiAiResponse(sender, response) {
 }
 
 function sendToApiAi(sender, text) {
- // sendTypingOn(sender);
+  // sendTypingOn(sender);
   let apiaiRequest = apiAiService.textRequest(text, {
     sessionId: sessionIds.get(sender)
   });
@@ -514,33 +538,6 @@ function receivedPostback(event) {
   switch (payload) {
     case "FACEBOOK_WELCOME":
       greetUserText(senderID);
-      const data = {
-        "recipient": {
-          "id": "1709859525787840"
-        },
-        "message": {
-          "attachment": {
-            "type": "template",
-            "payload": {
-              "template_type": "media",
-              "elements": [
-                {
-                  "media_type": "video",
-                  "url": "https://www.facebook.com/100004965349144/videos/1013384448837057",
-                  "buttons": [
-                    {
-                      "type": "web_url",
-                      "url": "http://google.com",
-                      "title": "View Website"
-                    }
-                  ]
-                }
-              ]
-            }
-          }
-        }
-      }      
-      sendVideoMessage(senderID, data)
       break;
     default:
       //unindentified payload
@@ -550,7 +547,7 @@ function receivedPostback(event) {
           "url": "https://www.facebook.com/100004965349144/videos/1013384448837057"
         }
       ]
-      sendVideoMessage(senderID,elements)
+      sendVideoMessage(senderID, elements)
       sendTextMessage(senderID, "I'm not sure what you want. Can you be more specific?");
       break;
   }
