@@ -13,7 +13,7 @@ const logger = require("morgan");
 const db = require("./config/db");
 var emoji = require("node-emoji");
 
-const { greetUserText, sendFbImageVideo, isDefined, sendAccountLinking, sendAudioMessage, sendButtonMessage, sendFileMessage, sendGenericMessage, sendGifMessage, sendImageMessage, sendQuickReply, sendReadReceipt, sendReceiptMessage, sendTextMessage, sendTypingOff, sendTypingOn, sendVideoMessage } = require("./misc/payload")
+const { sendGraphTemplate, greetUserText, sendFbImageVideo, isDefined, sendAccountLinking, sendAudioMessage, sendButtonMessage, sendFileMessage, sendGenericMessage, sendGifMessage, sendImageMessage, sendQuickReply, sendReadReceipt, sendReceiptMessage, sendTextMessage, sendTypingOff, sendTypingOn, sendVideoMessage } = require("./misc/payload")
 const { callSendAPI } = require("./misc/common")
 const cli = require('./config/cli').console
 /**
@@ -204,11 +204,27 @@ function handleEcho(messageId, appId, metadata) {
 function handleApiAiAction(sender, action, responseText, contexts, parameters) {
   cli.magenta(action)
    switch (action) {
+    case "send-graph" :
+      case "SENDGRAPH":
+      const graphEle = [{
+        "url": "https://open.spotify.com/album/1XbZ2tMfcQTbVkr55JnoRg",
+        "buttons": [
+          {
+            "type": "web_url",
+            "url": "https://en.wikipedia.org/wiki/Rickrolling",
+            "title": "View More"
+          }
+        ]     
+      }]  
+      sendGraphTemplate(sender,graphEle);
+     break;
     case "send-text":
+     case "SENDTEXT":
       const text = "This is example of Text message."
       sendTextMessage(sender, text);
       break;
     case "sedn-quick-reply":
+     case "SENDQUICKREPLY":
       const textRp = "Choose the oprions"
       const replies = [{
         "content_type": "text",
@@ -228,10 +244,12 @@ function handleApiAiAction(sender, action, responseText, contexts, parameters) {
       sendQuickReply(sender, textRp, replies)
       break;
     case "send-photo":
+     case "SENDIMAGE":
       const imgUrl = "https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/881e6651881085.58fd911b65d88.png";
       sendImageMessage(sender, imgUrl);
       break;
     case "send-button":
+     case "SENDBUTTON":
       const bText = "exmple buttons";
       const buttons = [{
         "type": "web_url",
@@ -248,7 +266,8 @@ function handleApiAiAction(sender, action, responseText, contexts, parameters) {
       }]
       sendButtonMessage(sender, bText, buttons)
       break;
-    case "send-carousel":
+    case "send-carousel" :
+      case "SENDCAROUSEL" :   
       const elements = [{
         "title": "Welcome!",
         "subtitle": "We have the right hat for everyone.We have the right hat for everyone.We have the right hat for everyone.",
@@ -280,6 +299,7 @@ function handleApiAiAction(sender, action, responseText, contexts, parameters) {
       break;
 
     case "send-media":
+     case "SENDMEDIA":
       const messageData = [
         {
           "media_type": "image",
@@ -314,6 +334,7 @@ function handleApiAiAction(sender, action, responseText, contexts, parameters) {
       break;
 
     case "send-receipt":
+     case "SENDRECEIPT":
        const recipient_name = "Nikhil Savaliya";
        const currency = "INR";
        const payment_method = "Visa 2345";
@@ -531,24 +552,12 @@ function receivedPostback(event) {
 
   // The 'payload' param is a developer-defined field which is set in a postback
   // button for Structured Messages.
-
   var payload = event.postback.payload;
-  console.log(payload);
-
+  cli.blue(payload);
+  handleApiAiAction(senderID, payload, "", "", "")
   switch (payload) {
     case "FACEBOOK_WELCOME":
       greetUserText(senderID);
-      break;
-    default:
-      //unindentified payload
-      var elements = [
-        {
-          "media_type": "video",
-          "url": "https://www.facebook.com/100004965349144/videos/1013384448837057"
-        }
-      ]
-      sendVideoMessage(senderID, elements)
-      sendTextMessage(senderID, "I'm not sure what you want. Can you be more specific?");
       break;
   }
   console.log(

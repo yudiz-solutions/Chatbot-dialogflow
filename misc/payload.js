@@ -13,23 +13,23 @@ const isDefined = (obj) => {
   return obj != null;
 }
 
-const sendFbImageVideo =  (recipientId,elements)=>{
+const sendFbImageVideo = (recipientId, elements) => {
   const messageData = {
     recipient: {
       id: recipientId
     },
-    message:{
+    message: {
       attachment: {
-        type:"template",
-        payload:{
-          template_type:"media",
+        type: "template",
+        payload: {
+          template_type: "media",
           elements: elements
         }
       }
     }
   };
-   callSendAPI(messageData)
-} 
+  callSendAPI(messageData)
+}
 
 const sendTextMessage = async (recipientId, text) => {
   var messageData = {
@@ -195,7 +195,23 @@ const sendGenericMessage = async (recipientId, elements) => {
   };
   await callSendAPI(messageData);
 }
-
+const sendGraphTemplate = async (recipientId, elements) => {
+  var messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: {
+      attachment: {
+        type: "template",
+        payload: {
+          template_type: "open_graph",
+          elements: elements
+        }
+      }
+    }
+  };
+  await callSendAPI(messageData);
+}
 const sendReceiptMessage = async (
   recipientId,
   recipient_name,
@@ -207,7 +223,7 @@ const sendReceiptMessage = async (
   summary,
   adjustments,
   order_url
-) => {
+ ) => {
   // Generate a random receipt ID as the API requires a unique ID
   var receiptId = "order" + Math.floor(Math.random() * 1000);
 
@@ -326,7 +342,6 @@ const sendAccountLinking = async (recipientId) => {
       }
     }
   };
-
   await callSendAPI(messageData);
 }
 
@@ -363,6 +378,7 @@ const greetUserText = async (userId) => {
 }
 
 module.exports = {
+  sendGraphTemplate,
   sendTextMessage,
   sendImageMessage,
   sendGifMessage,
@@ -379,5 +395,5 @@ module.exports = {
   sendAccountLinking,
   greetUserText,
   isDefined,
- sendFbImageVideo
+  sendFbImageVideo
 }
