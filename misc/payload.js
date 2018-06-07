@@ -212,6 +212,21 @@ const sendGraphTemplate = async (recipientId, elements) => {
   };
   await callSendAPI(messageData);
 }
+
+const sendListMessege = async (recipientId, elements) => {
+  var messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: {
+      attachment: {
+        type: "template",
+        payload: elements
+      }
+    }
+  };
+  await callSendAPI(messageData);
+}
 const sendReceiptMessage = async (
   recipientId,
   recipient_name,
@@ -378,6 +393,7 @@ const greetUserText = async (userId) => {
 }
 
 module.exports = {
+  sendListMessege,
   sendGraphTemplate,
   sendTextMessage,
   sendImageMessage,
